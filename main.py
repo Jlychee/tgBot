@@ -2,6 +2,9 @@ from aiogram import Bot, Dispatcher, types
 from aiogram import F
 from aiogram.types import FSInputFile
 from aiogram.filters import CommandStart, Command
+from aiogram.client.bot import DefaultBotProperties
+from aiogram.enums import ParseMode
+
 
 from parsing import get_info
 from img_path import get_img
@@ -9,7 +12,7 @@ from img_path import get_img
 from misc import config
 
 # todo: Создание бота
-bot = Bot(token=config.TOKEN, parse_mode='html')
+bot = Bot(config.TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
 dp = Dispatcher()
 
 

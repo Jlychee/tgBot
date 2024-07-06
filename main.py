@@ -6,7 +6,7 @@ from aiogram.client.bot import DefaultBotProperties
 from aiogram.enums import ParseMode
 
 
-from parsing import get_info
+from parsing import get_source_html, get_items_urls, get_url
 from img_path import get_img
 
 from misc import config
@@ -86,7 +86,9 @@ async def get_stats_command(message: types.Message):
         try:
             msg = ('Итак, вот какую информацию нам удалось собрать на этого игрока. '
                    'Но помни, что валорант - командная игра, и опираться только на статистику не стоит!!🤡\n\n')
-            for key, value in get_info(nickname[1:], ss).items():
+            url = get_url(nickname[1:], ss)
+            get_source_html(url)
+            for key, value in get_items_urls(r'.source_page.html').items():
                 msg += f'<b>{key}</b>: <em>{value}</em>\n\n'
             await message.answer(text=msg, reply_markup=get_keyboard_stats())
         except AttributeError:
@@ -98,6 +100,7 @@ async def get_stats_command(message: types.Message):
 # todo: Колбэки
 @dp.callback_query(F.data == 'season')
 async def callback_season(callback: types.CallbackQuery):
+    await callback.answer()
     await callback.message.answer('Вам нужна статистика за все сезоны или только за нынешний?',
                                   reply_markup=get_keyboard_season())
 
@@ -106,6 +109,7 @@ async def callback_season(callback: types.CallbackQuery):
 async def callback_stats(callback: types.CallbackQuery):
     global ss
     ss = ''
+    await callback.answer()
     await callback.message.answer(text='Введите ник игрока, начиная с ! например: !ValenOK#top')
 
 
@@ -113,11 +117,13 @@ async def callback_stats(callback: types.CallbackQuery):
 async def callback_stats_all(callback: types.CallbackQuery):
     global ss
     ss = '?season=all'
+    await callback.answer()
     await callback.message.answer(text='Введите ник игрока, начиная с ! например: !ValenOK#top')
 
 
 @dp.callback_query(F.data == 'mood')
 async def callback_mood(callback: types.CallbackQuery):
+    await callback.answer()
     await callback.message.answer_photo(*make_img_path(), reply_markup=get_keyboard_mood())
 
 

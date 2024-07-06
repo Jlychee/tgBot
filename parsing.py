@@ -25,7 +25,7 @@ def get_source_html(url):
     try:
         driver.get(url=url)
         time.sleep(3)
-        with open(r'.source_page.html', 'w', encoding='utf-8') as file:
+        with open(r'source_page.html', 'w', encoding='utf-8') as file:
             file.write(driver.page_source)
     except Exception as ex:
         pass

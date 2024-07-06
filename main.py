@@ -88,7 +88,7 @@ async def get_stats_command(message: types.Message):
                    'Но помни, что валорант - командная игра, и опираться только на статистику не стоит!!🤡\n\n')
             url = get_url(nickname[1:], ss)
             get_source_html(url)
-            for key, value in get_items_urls(r'.source_page.html').items():
+            for key, value in get_items_urls(r'source_page.html').items():
                 msg += f'<b>{key}</b>: <em>{value}</em>\n\n'
             await message.answer(text=msg, reply_markup=get_keyboard_stats())
         except AttributeError:

@@ -6,7 +6,7 @@ from aiogram.client.bot import DefaultBotProperties
 from aiogram.enums import ParseMode
 
 
-from parsing import get_source_html, get_items_urls, get_url
+from parsing import main
 from img_path import get_img
 
 from misc import config
@@ -86,9 +86,7 @@ async def get_stats_command(message: types.Message):
         try:
             msg = ('Итак, вот какую информацию нам удалось собрать на этого игрока. '
                    'Но помни, что валорант - командная игра, и опираться только на статистику не стоит!!🤡\n\n')
-            url = get_url(nickname[1:], ss)
-            get_source_html(url)
-            for key, value in get_items_urls(r'source_page.html').items():
+            for key, value in main(nickname[1:], ss).items():
                 msg += f'<b>{key}</b>: <em>{value}</em>\n\n'
             await message.answer(text=msg, reply_markup=get_keyboard_stats())
         except AttributeError:

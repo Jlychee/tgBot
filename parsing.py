@@ -9,12 +9,11 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 
 
-#smbツ#000
-
 def get_url(nickname, s):
     return f'https://tracker.gg/valorant/profile/riot/{nickname.replace("#", "%23")}/overview{s}'
 
 def get_source_html(url):
+    res = []
     service = Service(
         executable_path=r'C:\Users\Катя\Documents\GitHub\tg_bot_test\chromedriver\chromedriver.exe')
     options = webdriver.ChromeOptions()
@@ -24,25 +23,26 @@ def get_source_html(url):
 
     try:
         driver.get(url=url)
-        time.sleep(3)
-        with open(r'source_page.html', 'w', encoding='utf-8') as file:
-            file.write(driver.page_source)
+        time.sleep(0.5)
+        res = driver.page_source
     except Exception as ex:
         pass
     finally:
         driver.close()
         driver.quit()
+        return res
 
 
-def get_items_urls(file_path):
+def get_items_urls(url):
     data_info = {}
-
-    with open(file_path) as file:
-        scr = file.read()
+    scr = get_source_html(url)
 
     soup = BeautifulSoup(scr, 'lxml')
 
     data_info['Current Rating'] = soup.find('div', class_='rating-entry__rank').find('div', class_='value').text
+    if 'RR' in data_info['Current Rating']:
+        data_info['Current Rating'] = f"{soup.find('div', class_='rating-entry__rank').find('div', class_='label').text} {soup.find('div', class_='rating-entry__rank').find('span', class_='mmr').text}"
+
     data_info['Peak Rating'] = soup.find('div',
                                          class_='rating-summary__content rating-summary__content--secondary').find(
         'div', class_='value').text
@@ -63,3 +63,8 @@ def get_items_urls(file_path):
     for i in data:
         data_info[i.find('span', class_='name').text] = i.find('span', class_='value').text
     return data_info
+
+def main(nick, ss):
+    url = get_url(nick, ss)
+    return get_items_urls(url)
+
